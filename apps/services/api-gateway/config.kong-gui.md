@@ -7,6 +7,10 @@ Sau khi chạy `docker-compose up -d`, hệ thống sẽ hoạt động tại:
 
 # Hướng dẫn Config trên Kong GUI (Konga)
 
+## 1. Đầu tiên điền name và Kong Url
+   - **Name:** `Social App Kong`
+   - **Kong Admin Url:** `http://kong:8001`
+
 Truy cập: `http://localhost:1337`
 
 ## 1. Kết nối Node.js Service

@@ -69,6 +69,18 @@ services:
     depends_on:
       - kong
 
+  social-db:
+    image: postgres:13
+    ports:
+      - "5433:5432"
+    networks:
+      - social-net
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_DB: social_app
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - social_db_data:/var/lib/postgresql/data
   # --- APP SERVICES ---
 
   user-service:
@@ -76,7 +88,10 @@ services:
     networks:
       - social-net
     environment:
+      DATABASE_URL: "postgresql://myuser:mypassword@social-db:5432/social_app?schema=public"
       PORT: 3000
+    depends_on:
+      - social-db
 
   chat-service:
     build: ../apps/services/chat-service
@@ -84,3 +99,5 @@ services:
       - social-net
     environment:
       GIN_MODE: release
+volumes:
+    social_db_data:
