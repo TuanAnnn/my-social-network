@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+  // Thêm "linux-musl-openssl-3.0.x" vào danh sách
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  // ... (giữ nguyên các trường của bạn)
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
