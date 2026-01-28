@@ -1,23 +1,21 @@
-# --- SỬA DÒNG NÀY (1.20 -> 1.23) ---
-FROM golang:1.23-alpine
-
+# Stage 1: Builder (Dùng để build code Go)
+FROM golang:1.23-alpine AS builder
 WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN go build -o main ./cmd/main.go
 
-# 1. Cài Git
-RUN apk add --no-cache git
+# Stage 2: Runner (Cái này mới quan trọng!)
+FROM alpine:latest
 
-# 2. Proxy
-ENV GOPROXY=https://proxy.golang.org,direct
+WORKDIR /root/
 
-# 3. Copy code
-COPY main.go .
+# === KIỂM TRA DÒNG NÀY ===
+# Nó phải nằm ở dưới chữ FROM alpine:latest
+RUN apk add --no-cache tzdata
+# =========================
 
-# 4. Tự động tải thư viện
-RUN go mod init chat-service || true
-RUN go mod tidy
-
-# 5. Build
-RUN go build -o main .
-
-EXPOSE 8080
+COPY --from=builder /app/main .
+EXPOSE 3001
 CMD ["./main"]

@@ -97,7 +97,14 @@ services:
     build: ../apps/services/chat-service
     networks:
       - social-net
+    depends_on:
+      - social-db
     environment:
-      GIN_MODE: release
+      # Format kết nối cho Driver Postgres của Go (GORM)
+      # Lưu ý: host=social-db (tên service DB), port=5432 (cổng nội bộ)
+      DATABASE_URL: "host=social-db user=myuser password=mypassword dbname=social_app port=5432 sslmode=disable TimeZone=Asia/Ho_Chi_Minh"
+      JWT_SECRET: sieubimat123
+    ports:
+      - "3001:3001"
 volumes:
     social_db_data:
