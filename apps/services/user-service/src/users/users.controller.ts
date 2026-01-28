@@ -7,15 +7,21 @@ import {
   Get,
   Param,
   Patch,
+  HttpCode,
+  HttpStatus,
+  Request,
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto"; // Import DTO
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { Public } from "src/auth/public.decorator";
 
 @Controller("api/users") //
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Public()
+  @HttpCode(HttpStatus.OK)
   @Post("register")
   async register(@Body() body: CreateUserDto) {
     console.log("Body nhận được:", body);
@@ -37,6 +43,16 @@ export class UsersController {
   async getAllUser() {
     const allUser = await this.usersService.findAll();
     return allUser;
+  }
+
+  @Get("profile")
+  async getProfile(@Request() req) {
+    const userId = req.user.sub;
+
+    console.log("userId:: ", userId);
+
+    const user = await this.usersService.findOneById(userId);
+    return user;
   }
 
   @Get(":id")
